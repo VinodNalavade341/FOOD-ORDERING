@@ -3,6 +3,7 @@ version: '3.8'
 services:
   app:
     build: .
+    container_name: food-ordering-app
     ports:
       - "80:80"
     volumes:
@@ -14,6 +15,7 @@ services:
 
   db:
     image: mysql:5.7
+    container_name: food-ordering-db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
