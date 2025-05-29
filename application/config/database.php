@@ -6,8 +6,8 @@ $query_builder = TRUE;
 
 $db['default'] = array(
     'dsn'   => '',
-    'hostname' => 'db',  // Docker service name, NOT localhost or 127.0.0.1
-    'username' => 'user',  // Matches docker-compose.yml
+    'hostname' => 'db', // name of the MySQL service in docker-compose
+    'username' => 'user',
     'password' => 'password',
     'database' => 'food_ordering',
     'dbdriver' => 'mysqli',
