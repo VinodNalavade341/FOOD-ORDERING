@@ -1,1 +1,41 @@
 
+name: CI/CD to EC2
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Build and Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Add SSH Key
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+    - name: Deploy over SSH
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          echo "🔁 Cleaning up old container and image..."
+          docker stop food-ordering || true
+          docker rm food-ordering || true
+          docker rmi food-ordering-image || true
+
+          echo "📦 Cloning latest repo..."
+          rm -rf food-ordering
+          git clone https://github.com/VinodNalavade341/FOOD-ORDERING.git food-ordering
+          cd food-ordering
+
+          echo "🐳 Building Docker image..."
+          docker build -t food-ordering-image .
+
+          echo "🚀 Running container..."
+          docker run -d --name food-ordering -p 80:80 food-ordering-image
+        EOF
